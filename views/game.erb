@@ -1,0 +1,34 @@
+<center>
+  <h2>
+    Blackjack!
+  </h2>
+</center>
+
+<p>
+  Welcome <%= session[:player_name] %>.
+</p>
+
+<div class="well">
+  <h4>
+    Dealer's Cards:
+  </h4>
+  <p>
+    Dealer has:
+    <%= session[:dealer_cards] %>
+    <br>
+    Dealer total is: <%= calculate_total(session[:dealer_cards]) %>
+  </p>
+
+  <br/>
+
+  <h4>
+    <%= session[:player_name] %>'s Cards:
+  </h4>
+  <p>
+    <%= session[:player_name] %> has:
+    <%= session[:player_cards] %>
+    <br>
+    <%= session[:player_name] %>'s total is: <%= calculate_total(session[:player_cards]) %>
+  </p>
+
+</div>
