@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'pry'
 require 'sinatra'
 
 set :sessions, true
@@ -74,8 +75,6 @@ get '/' do
   end
 end
 
-
-
 get '/new_player' do
   erb :new_player
 end
@@ -86,7 +85,27 @@ post '/new_player' do
     halt erb(:new_player)
   end
 
+  session[:bankroll] = 500
   session[:player_name] = params[:player_name] 
+  redirect '/bet'
+end
+
+get '/bet' do
+  if session[:bankroll] < 0
+    redirect '/game_over'
+  end
+
+  erb :bet
+end
+
+post '/bet' do
+  if (params[:bet].empty?) || (params[:bet].to_i < 1)
+    @error = "Number Amount over 1 is required"
+    halt erb(:bet)
+  end
+
+  session[:bet] = params[:bet]
+
   redirect '/game'
 end
 
@@ -113,9 +132,11 @@ post '/game/player/hit' do
   if player_total == 21
     winner!("Winner!")
     @play_again = true
+    session[:bankroll] = session[:bankroll] + session[:bet].to_i
   elsif player_total > 21
     loser!("Loser!")
     @play_again = true
+    session[:bankroll] = session[:bankroll] - session[:bet].to_i
   end
 
   erb :game
@@ -137,9 +158,11 @@ get '/game/dealer' do
   if dealer_total == 21
     loser!("Sorry, dealer wins.")
     @play_again = true
+    session[:bankroll] = session[:bankroll] - session[:bet].to_i
   elsif dealer_total > 21
     winner!("Congrats, dealer busted.")
     @play_again = true
+    session[:bankroll] = session[:bankroll] + session[:bet].to_i
   elsif dealer_total >= 17
     redirect '/game/compare'
   else
@@ -163,9 +186,11 @@ get '/game/compare' do
   if player_total < dealer_total
     loser!("#{session[:player_name]} stayed at #{player_total} and the Dealer stayed at #{dealer_total}")
     @play_again = true
+    session[:bankroll] = session[:bankroll] - session[:bet].to_i
   elsif player_total > dealer_total
     winner!("#{session[:player_name]} stayed at #{player_total} and the Dealer stated at #{dealer_total}")
     @play_again = true
+    session[:bankroll] = session[:bankroll] + session[:bet].to_i
   else
     tie!("Both #{session[:player_name]} and Dealer stayed at #{player_total}")
     @play_again = true

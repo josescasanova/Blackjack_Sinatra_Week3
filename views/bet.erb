@@ -1,0 +1,12 @@
+<center>
+  <h3>
+    What is your bet? Your bank roll is <%= session[:bankroll] %>.
+  </h3>
+  
+<br/>
+<form action='/bet' method="post">
+  <input type="text" name="bet"/>
+  <br>
+  <input type="submit" class="btn"/>
+</form>
+</center>
