@@ -99,8 +99,8 @@ get '/bet' do
 end
 
 post '/bet' do
-  if (params[:bet].empty?) || (params[:bet].to_i < 1)
-    @error = "Number Amount over 1 is required"
+  if (params[:bet].empty?) || (params[:bet].to_i < 1) || (params[:bet].to_i > session[:bankroll])
+    @error = "Number Amount over 1 is required. Also, bet within you bankroll."
     halt erb(:bet)
   end
 
@@ -155,11 +155,7 @@ get '/game/dealer' do
 
   dealer_total = calculate_total(session[:dealer_cards])
 
-  if dealer_total == 21
-    loser!("Sorry, dealer wins.")
-    @play_again = true
-    session[:bankroll] = session[:bankroll] - session[:bet].to_i
-  elsif dealer_total > 21
+  if dealer_total > 21
     winner!("Congrats, dealer busted.")
     @play_again = true
     session[:bankroll] = session[:bankroll] + session[:bet].to_i
