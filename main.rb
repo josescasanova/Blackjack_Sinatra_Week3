@@ -48,11 +48,13 @@ helpers do
 
 
   def winner!(msg)
+    session[:bankroll] = session[:bankroll] + session[:bet].to_i
     @show_hit_or_stay_buttons = false
     @success = "<strong>#{session[:player_name]} wins!</strong> #{msg}"
   end
 
   def loser!(msg)
+    session[:bankroll] = session[:bankroll] - session[:bet].to_i
     @show_hit_or_stay_buttons = false
     @error = "<strong>#{session[:player_name]} loses.</strong> #{msg}"
   end
@@ -91,7 +93,7 @@ post '/new_player' do
 end
 
 get '/bet' do
-  if session[:bankroll] < 0
+  if session[:bankroll] < 1
     redirect '/game_over'
   end
 
@@ -99,8 +101,8 @@ get '/bet' do
 end
 
 post '/bet' do
-  if (params[:bet].empty?) || (params[:bet].to_i < 1) || (params[:bet].to_i > session[:bankroll])
-    @error = "Number Amount over 1 is required. Also, bet within you bankroll."
+  if (params[:bet].empty?) || (params[:bet].to_i < 1) || (params[:bet].to_i > session[:bankroll].to_i)
+    @error = "Number Amount over 1 is required. Also, bet within your bankroll."
     halt erb(:bet)
   end
 
@@ -132,11 +134,9 @@ post '/game/player/hit' do
   if player_total == 21
     winner!("Winner!")
     @play_again = true
-    session[:bankroll] = session[:bankroll] + session[:bet].to_i
   elsif player_total > 21
     loser!("Loser!")
     @play_again = true
-    session[:bankroll] = session[:bankroll] - session[:bet].to_i
   end
 
   erb :game
@@ -158,7 +158,6 @@ get '/game/dealer' do
   if dealer_total > 21
     winner!("Congrats, dealer busted.")
     @play_again = true
-    session[:bankroll] = session[:bankroll] + session[:bet].to_i
   elsif dealer_total >= 17
     redirect '/game/compare'
   else
@@ -182,11 +181,9 @@ get '/game/compare' do
   if player_total < dealer_total
     loser!("#{session[:player_name]} stayed at #{player_total} and the Dealer stayed at #{dealer_total}")
     @play_again = true
-    session[:bankroll] = session[:bankroll] - session[:bet].to_i
   elsif player_total > dealer_total
     winner!("#{session[:player_name]} stayed at #{player_total} and the Dealer stated at #{dealer_total}")
     @play_again = true
-    session[:bankroll] = session[:bankroll] + session[:bet].to_i
   else
     tie!("Both #{session[:player_name]} and Dealer stayed at #{player_total}")
     @play_again = true
