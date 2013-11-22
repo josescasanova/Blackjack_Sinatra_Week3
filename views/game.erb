@@ -1,3 +1,12 @@
+<div id="game">
+
+  <%if @loser %>
+      <div class="alert alert-error"><%=loser%></div>
+    <% end %>
+      <%if @winner %>
+      <div class="alert alert-success"><%=@winner%></div>
+  <% end %>
+
 <center>
   <% if @play_again %>
   <strong>
@@ -8,7 +17,7 @@
     <a href="/game_over" class="btn">NO!</a>
   </p>
   <% end %>
-<div class="well">
+<div class="well" id="dealer_cards">
   <h4>
     Dealer's Cards:
   </h4>
@@ -25,8 +34,8 @@
     Dealer total is: <%= calculate_total(session[:dealer_cards]) %>
     <% end %>
   </p>
-
-  <br/>
+</div>
+<div class="well" id="player_cards">
 
   <h4>
     <%= session[:player_name] %>'s Cards:
@@ -41,6 +50,8 @@
     <%= session[:player_name] %>'s total is: <%= calculate_total(session[:player_cards]) %>
   </p>
 </div>
+
+
   <% if @show_hit_or_stay_buttons %>
 <h4>
   What would <%= session[:player_name] %> like to do?
@@ -53,3 +64,5 @@
   </form>
   <% end %>
 </center>
+
+</div>
