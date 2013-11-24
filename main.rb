@@ -50,18 +50,18 @@ helpers do
   def winner!(msg)
     session[:bankroll] = session[:bankroll] + session[:bet].to_i
     @show_hit_or_stay_buttons = false
-    @winner = "<strong>#{session[:player_name]} wins!</strong> #{msg}"
+    @success = "<strong>#{session[:player_name]} wins!</strong> #{msg}"
   end
 
   def loser!(msg)
     session[:bankroll] = session[:bankroll] - session[:bet].to_i
     @show_hit_or_stay_buttons = false
-    @loser = "<strong>#{session[:player_name]} loses.</strong> #{msg}"
+    @error = "<strong>#{session[:player_name]} loses.</strong> #{msg}"
   end
 
   def tie!(msg)
     @show_hit_or_stay_buttons = false
-    @winner = "<strong>It is a tie!</strong> #{msg}"
+    @success = "<strong>It is a tie!</strong> #{msg}"
   end
 end
 
@@ -139,7 +139,7 @@ post '/game/player/hit' do
     @play_again = true
   end
 
-  erb :game, layout: false
+  erb :game
 end
 
 post '/game/player/stay' do
